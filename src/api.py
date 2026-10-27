@@ -34,7 +34,15 @@ tokenizer = AutoTokenizer.from_pretrained(
     use_fast=False,
 )
 
-model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
+# model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
+# model.to(device)
+# model.eval()
+
+model = AutoModelForSequenceClassification.from_pretrained(
+    MODEL_NAME,
+    low_cpu_mem_usage=True,
+)
+
 model.to(device)
 model.eval()
 
