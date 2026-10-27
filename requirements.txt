@@ -1,5 +1,8 @@
 torch
+fastapi
 uvicorn
+sentencepiece
+pydantic
 transformers>=4.45.0
 datasets>=3.0.0
 scikit-learn>=1.5.0
