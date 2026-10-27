@@ -58,43 +58,6 @@ def health():
     return {"status": "healthy"}
 
 
-# @app.post("/predict")
-# def predict_sentiment(request: ReviewRequest):
-#     text = request.text.strip()
-
-#     if not text:
-#         raise HTTPException(
-#             status_code=400,
-#             detail="Review text cannot be empty.",
-#         )
-
-#     inputs = tokenizer(
-#         text,
-#         return_tensors="pt",
-#         truncation=True,
-#         padding=True,
-#         max_length=256,
-#     )
-
-#     inputs = {key: value.to(device) for key, value in inputs.items()}
-
-#     with torch.no_grad():
-#         outputs = model(**inputs)
-#         probabilities = torch.softmax(outputs.logits, dim=1)[0]
-
-#     predicted_id = int(torch.argmax(probabilities).item())
-#     confidence = float(probabilities[predicted_id].item())
-
-#     # IMDb dataset labels: 0 = negative, 1 = positive
-#     sentiment = "POSITIVE" if predicted_id == 1 else "NEGATIVE"
-
-#     return {
-#         "sentiment": sentiment,
-#         "confidence": round(confidence * 100, 2),
-#         "text": text,
-#     }
-
-
 @app.post("/predict")
 def predict_sentiment(request: ReviewRequest):
     text = request.text.strip()
