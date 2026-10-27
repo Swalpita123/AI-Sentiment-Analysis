@@ -1,140 +1,137 @@
-# Deep Learning Classification & Text Processing Pipeline
+# AI-Powered Movie Review Sentiment Analysis
 
-An end-to-end NLP portfolio project that classifies movie reviews as **positive** or **negative**. It compares a traditional machine-learning baseline (TF-IDF + Logistic Regression) with a fine-tuned DistilBERT transformer.
+An AI-powered text classification project that analyzes IMDb movie reviews and predicts whether a review expresses a **positive or negative sentiment**. The project uses a fine-tuned DistilBERT transformer model and provides predictions through a FastAPI backend and an interactive React frontend.
 
 ## Features
 
-- Public IMDb review dataset downloaded through Hugging Face Datasets
-- Text normalization and tokenization
-- Reproducible train/test sampling with a fixed seed
-- TF-IDF + Logistic Regression baseline
-- DistilBERT fine-tuning using PyTorch and Hugging Face Transformers
-- Accuracy, precision, recall, F1-score, classification report, and confusion matrix
-- CLI prediction on new text
-- Saves model/tokenizer and evaluation artifacts locally
+- Sentiment classification of movie reviews as Positive or Negative.
+- DistilBERT-based natural language processing.
+- Confidence scores for predictions.
+- FastAPI REST API for model inference.
+- Interactive React user interface.
+- Model evaluation using Accuracy, Precision, Recall, and F1-score.
 
-> **Important:** The repository contains the training pipeline, not a pretrained fine-tuned model. You must run training before using `src/predict.py`. Report only the metrics produced by your own run; do not claim unmeasured accuracy.
+## Tech Stack
 
-## 1. Requirements
+Python, PyTorch, DistilBERT, Hugging Face Transformers, FastAPI, Uvicorn, React.js, JavaScript (ES6+), HTML5, CSS3, REST APIs, IMDb Dataset, Git, GitHub.
 
-- Windows 10/11
-- Python 3.11 or 3.12 recommended
-- VS Code and its Python extension
-- Internet connection for downloading packages, the IMDb dataset, and the pretrained DistilBERT model
-- RAM: 8 GB minimum recommended; 16 GB is more comfortable
-- GPU is optional. CPU training works but can be slow. A CUDA-compatible PyTorch setup can speed it up.
-
-## 2. Create and activate a virtual environment
-
-Open this folder in VS Code. In the VS Code terminal (PowerShell), run:
-
-```powershell
-py -3.12 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-If PowerShell blocks activation, run this for the current terminal only, then activate again:
-
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\.venv\Scripts\Activate.ps1
-```
-
-If Python 3.12 is not installed, install it from https://www.python.org/downloads/ and reopen VS Code. You can also use `py -0p` to list installed Python versions.
-
-## 3. Train a traditional baseline (recommended)
-
-This is quicker than transformer training and provides a point of comparison:
-
-```powershell
-python -m src.baseline --train-samples 2000 --eval-samples 1000
-```
-
-Metrics are saved in `outputs/baseline/metrics.json`.
-
-For the full IMDb training/test splits, use `--train-samples 0 --eval-samples 0`. This takes more memory/time.
-
-## 4. Fine-tune DistilBERT
-
-Start with the small run to verify your environment:
-
-```powershell
-python -m src.train --train-samples 500 --eval-samples 250 --epochs 1 --batch-size 4
-```
-
-Then run a more meaningful experiment:
-
-```powershell
-python -m src.train --train-samples 2000 --eval-samples 1000 --epochs 1 --batch-size 8
-```
-
-Use `--train-samples 0 --eval-samples 0` to use all 25,000 training and 25,000 test reviews. Full fine-tuning can take hours on CPU; use a GPU if available. If you run out of memory, reduce `--batch-size` to 2 or `--max-length` to 128.
-
-The fine-tuned model is saved in `outputs/sentiment_model/`. Evaluation artifacts are in `outputs/sentiment_model/evaluation/`:
-- `metrics.json`
-- `classification_report.json`
-- `confusion_matrix.png`
-
-## 5. Predict sentiment
-
-After training succeeds:
-
-```powershell
-python -m src.predict --text "The acting was wonderful and the story was engaging."
-python -m src.predict
-```
-
-The second command opens interactive mode. Type `quit` to exit.
-
-Example output format (your confidence will vary):
-
-```text
-Sentiment: POSITIVE | confidence: 94.20%
-```
-
-The number above is an illustration only, not a guaranteed result.
-
-## 6. Project structure
+## Project Structure
 
 ```text
 text_classification_pipeline/
-├── README.md
+├── src/
+│   ├── data_utils.py
+│   ├── baseline.py
+│   ├── train.py
+│   ├── predict.py
+│   └── api.py
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── index.html
+├── outputs/
 ├── requirements.txt
-├── .gitignore
-└── src/
-    ├── __init__.py
-    ├── data_utils.py
-    ├── baseline.py
-    ├── train.py
-    └── predict.py
+├── README.md
+└── .gitignore
 ```
 
-Generated datasets/cache and model files are not committed to Git by default. Hugging Face caches datasets/models in its local cache; the fine-tuned model is saved under `outputs/`.
+## Model Performance
 
-## 7. How it works
+The model was trained and evaluated on a sample of the IMDb movie review dataset.
 
-1. **Load data:** IMDb contains movie reviews with binary labels (0 = negative, 1 = positive).
-2. **Normalize:** remove HTML line-break tags and normalize whitespace.
-3. **Tokenize:** DistilBERT's tokenizer maps text to token IDs and attention masks.
-4. **Fine-tune:** the pretrained transformer learns the sentiment task from labeled reviews.
-5. **Evaluate:** compute accuracy, precision, recall, F1 and confusion matrix on the test split.
-6. **Predict:** tokenize new user text and choose the label with the highest softmax probability.
+- **Evaluation Accuracy:** 82.8%
+- **Evaluation Samples:** 250
+- **Model:** DistilBERT
 
-The baseline uses TF-IDF word/phrase features and Logistic Regression. Compare its metrics with DistilBERT's metrics using the same sample sizes for a fair comparison.
+*Note: These results are from a limited evaluation sample and may differ when evaluated on a larger dataset.*
 
-## 8. Common Windows fixes
+## Installation and Setup
 
-- **`py` cannot find Python 3.12:** install Python 3.12 or use your installed supported version when creating the environment.
-- **`ModuleNotFoundError: src`:** run commands from the project root and use `python -m src.train`, not `python src/train.py`.
-- **PowerShell activation blocked:** use the process-scoped execution-policy command in Step 2.
-- **CUDA/GPU issue:** start with CPU; PyTorch will use CUDA automatically when it is available.
-- **Download interrupted:** rerun the same command. Hugging Face downloads are cached and usually resume/reuse completed files.
-- **Out of memory:** lower batch size and max length; use fewer samples while testing.
+### 1. Clone the repository
 
-## 9. Interview explanation
+```bash
+git clone https://github.com/YOUR-USERNAME/ai-sentiment-analysis.git
+cd ai-sentiment-analysis
+```
 
-“I built an end-to-end sentiment classification pipeline using Python, Pandas, Scikit-learn, PyTorch, and Hugging Face Transformers. I prepared labeled IMDb reviews, normalized text, and created a TF-IDF plus Logistic Regression baseline. I then fine-tuned DistilBERT for binary sentiment classification and evaluated it using accuracy, precision, recall, F1-score, and a confusion matrix. I also saved the model and tokenizer so that new reviews can be classified through a command-line prediction script.”
+Replace `YOUR-USERNAME` with your GitHub username.
 
-Only say that you fine-tuned and evaluated the model after successfully running the training script. Be ready to discuss your actual dataset size, training time, hardware, and measured metrics.
+### 2. Set up the Python environment
+
+```bash
+python -m venv .venv
+```
+
+Activate the environment on Windows:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Install the dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Train the model
+
+```bash
+python -m src.train --train-samples 500 --eval-samples 250 --epochs 1 --batch-size 4
+```
+
+Training generates the model files in `outputs/sentiment_model/`. The training script downloads the required dataset and pretrained model as needed.
+
+### 4. Start the FastAPI backend
+
+From the project root, run:
+
+```bash
+python -m uvicorn src.api:app --reload --host 127.0.0.1 --port 8000
+```
+
+Open the interactive API documentation:
+
+http://127.0.0.1:8000/docs
+
+### 5. Start the React frontend
+
+Open a second terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open the local URL displayed in the terminal, usually:
+
+http://localhost:5173
+
+Keep both the backend and frontend running while using the application.
+
+## API Usage
+
+**Endpoint:** `POST /predict`
+
+Example request:
+
+```json
+{
+  "text": "The movie was excellent and the acting was amazing."
+}
+```
+
+The API returns the predicted sentiment, confidence score, and original review text.
+
+## Future Improvements
+
+- Train and evaluate the model on a larger dataset.
+- Improve prediction performance on mixed or ambiguous reviews.
+- Deploy the frontend and backend for public access.
+- Add support for additional text classification tasks.
+
+## Author
+
+Developed as an AI/NLP project to demonstrate transformer-based sentiment analysis, model evaluation, REST API development, and full-stack integration.
