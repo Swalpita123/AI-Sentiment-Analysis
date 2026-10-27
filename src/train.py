@@ -93,16 +93,6 @@ def main():
         seed=args.seed,
         fp16=torch.cuda.is_available(),
     )
-
-    # trainer = Trainer(
-    #     model=model,
-    #     args=training_args,
-    #     train_dataset=train_ds,
-    #     eval_dataset=test_ds,
-    #     tokenizer=tokenizer,
-    #     data_collator=collator,
-    #     compute_metrics=compute_metrics,
-    # )
     
     
     trainer = Trainer(
