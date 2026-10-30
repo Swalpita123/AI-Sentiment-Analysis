@@ -51,11 +51,9 @@ The model was trained and evaluated on a sample of the IMDb movie review dataset
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/ai-sentiment-analysis.git
+git clone https://github.com/Swalpita123/AI-Sentiment-Analysis.git
 cd ai-sentiment-analysis
 ```
-
-Replace `YOUR-USERNAME` with your GitHub username.
 
 ### 2. Set up the Python environment
 
